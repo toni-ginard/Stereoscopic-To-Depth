@@ -6,12 +6,8 @@ from keras import layers
 def unet(in_left=(64, 64, 1), in_right=(64, 64, 1)):
 
     left = Input(in_left)
-    # encoded_left = layers.LSTM(64)(left)
-
     right = Input(in_right)
-    # encoded_right = layers.LSTM(64)(right)
 
-    # concatenated = layers.concatenate([encoded_left, encoded_right], axis=-1)
     concatenated = layers.concatenate([left, right], axis=-1)
 
     conv1 = Conv2D(64, 3, activation='relu', padding='same', kernel_initializer='he_normal')(concatenated)

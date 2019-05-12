@@ -1,5 +1,7 @@
 from keras.preprocessing.image import ImageDataGenerator
-import os
+from skimage import io
+from skimage import color
+from numpy import *
 
 
 def train_input_generator(gen, path1, path2):
@@ -22,3 +24,14 @@ def input_generator(path):
 def train_output_generator(gen, path):
     validation_generator = gen.flow_from_directory(path, target_size=(64, 64), batch_size=20)
     return validation_generator
+
+
+def load_data(path):
+    images = io.imread_collection(path)
+    list = []
+    """for i in images:
+        list.append(color.rgb2gray(i))"""
+    for i in range(len(images)):
+        list.append(color.rgb2gray(images[i]))
+        list[i] = list[i][:, :, newaxis]
+    return array(list)
