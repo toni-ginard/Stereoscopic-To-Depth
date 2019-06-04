@@ -38,7 +38,7 @@ def load_data(path):
     return array(list)
 
 
-def validation(history):
+def save_validation(history, path):
     loss = history['loss']
     val_loss = history['val_loss']
 
@@ -48,5 +48,6 @@ def validation(history):
     plt.title('Training and validation loss')
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
+    plt.yscale('log')
     plt.legend()
-    plt.show()
+    plt.savefig(path)
