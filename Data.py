@@ -48,6 +48,6 @@ def save_validation(history, path):
     plt.title('Training and validation loss')
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
-    plt.yscale('log')
+    # plt.yscale('log')
     plt.legend()
     plt.savefig(path)
