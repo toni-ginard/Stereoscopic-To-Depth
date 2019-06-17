@@ -1,12 +1,12 @@
-from Model import unet
+from Model import *
 from Data import *
 from keras import optimizers
 import os
 
 
-num_train_images = 10
+num_train_images = 5
 num_val_images = 1
-exp = "/Prova"
+exp = "/Users/toniginard/Desktop/TFG/Experiments/Prova"
 main_path = "/Users/toniginard/Desktop/TFG/"
 
 epochs = 5
@@ -20,7 +20,7 @@ def main():
 
     model.compile(loss='mean_squared_error', optimizer=optimizers.RMSprop(lr=1e-4), metrics=['mse'])  # 'mse', 'mae', 'mape', 'cosine'
 
-    # model.summary()
+    save_model(model, exp)
 
     # Load training data
     l_train = load_data(main_path + "Images/Train/left/*.jpg")
@@ -42,7 +42,7 @@ def main():
     history = model.fit(([l_train, r_train]), d_train, epochs=epochs, batch_size=batch_size,
                         validation_data=([l_val, r_val], d_val))
 
-    save_validation(history.history, main_path + "Experiments" + exp + "/Validation/loss.png")
+    save_validation(history.history, exp + "/Validation/loss.png")
 
     # model.save('stereo_to_depth.h5')
 
@@ -52,7 +52,7 @@ def main():
     pred = model.predict([l_pred, r_pred])
     pred = pred[0, :, :, 0]
 
-    plt.imsave(main_path + "Experiments" + exp + "/Predictions/pred0.png", pred, cmap='gray')
+    plt.imsave(exp + "/Predictions/pred0.png", pred, cmap='gray')
 
 
 if __name__ == "__main__":
