@@ -1,26 +1,29 @@
 from Models.Unet import *
-from Data import *
+from Models.vgg16 import *
 from keras import optimizers
+from Data import *
 import os
 
 
 MAIN_PATH = "/Users/toniginard/Desktop/TFG"
-EXP = MAIN_PATH + "/Experiments/Prova"
+EXP = MAIN_PATH + "/Experiments/VGG16/Exp4"
 
-EPOCHS = 10
-BATCH_SIZE = 2
+EPOCHS = 100
+BATCH_SIZE = 10
 
 NUM_TRAIN_IMAGES = 10
-NUM_VAL_IMAGES = 1
-NUM_TEST_IMAGES = 2
+NUM_VAL_IMAGES = 10
+NUM_TEST_IMAGES = 5
 
 
 def main():
     os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
-    model = unet()
+    model = get_model()  # unet()
 
     model.compile(loss='mean_squared_error', optimizer=optimizers.RMSprop(lr=1e-4), metrics=['mse'])  # 'mse', 'mae', 'mape', 'cosine'
+
+    model.summary()
 
     save_summary(model, EXP)
 

@@ -1,23 +1,19 @@
-import random
-import skimage
-
-import matplotlib.pyplot as plt
-import numpy as np
-from keras import layers, Model, optimizers
-from keras.datasets import cifar10
+from keras import layers, Model
 
 
-def get_model(input_channels=6, ouput_channels=4, input_spatial_size=(256, 256),
-              residual_blocks=5):
+def get_model(input_channels=1, ouput_channels=1, in_left=(64, 64), in_right=(64, 64), residual_blocks=5):
     """ Generate an image-to-image model.
 
     Based on "Perceptual Losses for Real-Time Style Transfer and Super-Resolution", by Justin et al.
     In contrast to the original, instead of using initial padding, the residual blocks use padding
     for simplicity.
     """
-    if len(input_spatial_size) == 1:
-        input_spatial_size = (input_spatial_size, input_spatial_size)
-    assert input_spatial_size[0] % 4 == 0 and input_spatial_size[1] % 4 == 0, 'Input size must by multiple of 4'
+    if len(in_left) == 1:
+        in_left = (in_left, in_left)
+    assert in_left[0] % 4 == 0 and in_left[1] % 4 == 0, 'Input size must by multiple of 4'
+    if len(in_right) == 1:
+        in_right = (in_right, in_right)
+    assert in_right[0] % 4 == 0 and in_right[1] % 4 == 0, 'Input size must by multiple of 4'
     # Define layers
     lyrs = [
         layers.Conv2D(filters=32, kernel_size=(9, 9), strides=1, padding='same'),
@@ -29,12 +25,14 @@ def get_model(input_channels=6, ouput_channels=4, input_spatial_size=(256, 256),
         layers.Conv2D(filters=ouput_channels, kernel_size=(9, 9), strides=1, padding='same')
     ]
     # Define input-output logic. Assume channels last (tensorflow)
-    inp = layers.Input(shape=input_spatial_size + (input_channels,))
+    left = layers.Input(shape=in_left + (input_channels,))
+    right = layers.Input(shape=in_right + (input_channels,))
+    inp = layers.concatenate([left, right], axis=-1)
     out = inp
     for lyr in lyrs:
         out = lyr(out)
     # Return keras model
-    model = Model(inputs=inp, outputs=out)
+    model = Model(inputs=[left, right], outputs=out)
     return model
 
 
