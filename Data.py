@@ -27,15 +27,17 @@ import matplotlib.pyplot as plt
 #     return validation_generator
 
 
-def load_data(path):
+def load_data(path, num_images):
     images = io.imread_collection(path)
     list = []
     """for i in images:
         list.append(color.rgb2gray(i))"""
-    for i in range(len(images)):
+    for i in range(num_images):
         list.append(resize(color.rgb2gray(images[i]), [64, 64]))
         list[i] = list[i][:, :, newaxis]
-    return array(list)
+    my_array = array(list)
+    my_array = my_array[:num_images]
+    return my_array  # array(list)  # [:num_images]
 
 
 def save_validation(history, path):
@@ -51,3 +53,10 @@ def save_validation(history, path):
     plt.yscale('log')
     plt.legend()
     plt.savefig(path)
+
+
+def save_predictions(path, num_images, predictions):
+    # plt.imsave(path + "pred0.png", predictions, cmap='gray')
+    for i in range(num_images):
+        name = path + "/pred" + str(i) + ".png"
+        plt.imsave(name, predictions[i], cmap='gray')

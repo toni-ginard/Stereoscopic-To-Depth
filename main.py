@@ -1,16 +1,18 @@
-from Model import *
+from Models.Unet import *
 from Data import *
 from keras import optimizers
 import os
 
 
-num_train_images = 5
-num_val_images = 1
-exp = "/Users/toniginard/Desktop/TFG/Experiments/Prova"
-main_path = "/Users/toniginard/Desktop/TFG/"
+MAIN_PATH = "/Users/toniginard/Desktop/TFG"
+EXP = MAIN_PATH + "/Experiments/Prova"
 
-epochs = 5
-batch_size = 2
+EPOCHS = 10
+BATCH_SIZE = 2
+
+NUM_TRAIN_IMAGES = 10
+NUM_VAL_IMAGES = 1
+NUM_TEST_IMAGES = 2
 
 
 def main():
@@ -20,39 +22,33 @@ def main():
 
     model.compile(loss='mean_squared_error', optimizer=optimizers.RMSprop(lr=1e-4), metrics=['mse'])  # 'mse', 'mae', 'mape', 'cosine'
 
-    save_model(model, exp)
+    save_summary(model, EXP)
 
-    # Load training data
-    l_train = load_data(main_path + "Images/Train/left/*.jpg")
-    r_train = load_data(main_path + "Images/Train/right/*.jpg")
-    d_train = load_data(main_path + "Images/Train/depth/*.jpg")
-    l_train = l_train[:num_train_images]
-    r_train = r_train[:num_train_images]
-    d_train = d_train[:num_train_images]
+    # LOAD TRAIN DATA
+    l_train = load_data(MAIN_PATH + "/Images/Train/left/*.jpg", NUM_TRAIN_IMAGES)
+    r_train = load_data(MAIN_PATH + "/Images/Train/right/*.jpg", NUM_TRAIN_IMAGES)
+    d_train = load_data(MAIN_PATH + "/Images/Train/depth/*.jpg", NUM_TRAIN_IMAGES)
 
-    # Load validation data
-    l_val = load_data(main_path + "Images/Validation/left/*.jpg")
-    r_val = load_data(main_path + "Images/Validation/right/*.jpg")
-    d_val = load_data(main_path + "Images/Validation/depth/*.jpg")
-    l_val = l_val[:num_train_images]
-    r_val = r_val[:num_train_images]
-    d_val = d_val[:num_train_images]
+    # LOAD VALIDATION DATA
+    l_val = load_data(MAIN_PATH + "/Images/Validation/left/*.jpg", NUM_VAL_IMAGES)
+    r_val = load_data(MAIN_PATH + "/Images/Validation/right/*.jpg", NUM_VAL_IMAGES)
+    d_val = load_data(MAIN_PATH + "/Images/Validation/depth/*.jpg", NUM_VAL_IMAGES)
 
-    # Entrenar
-    history = model.fit(([l_train, r_train]), d_train, epochs=epochs, batch_size=batch_size,
+    # FIT
+    history = model.fit(([l_train, r_train]), d_train, epochs=EPOCHS, batch_size=BATCH_SIZE,
                         validation_data=([l_val, r_val], d_val))
 
-    save_validation(history.history, exp + "/Validation/loss.png")
+    save_validation(history.history, EXP + "/Validation/loss.png")
 
     # model.save('stereo_to_depth.h5')
 
-    # Load prediction data
-    l_pred = load_data(main_path + "Images/Test/left/*.jpg")
-    r_pred = load_data(main_path + "Images/Test/right/*.jpg")
+    # LOAD PREDICTION DATA
+    l_pred = load_data(MAIN_PATH + "/Images/Test/left/*.jpg", NUM_TEST_IMAGES)
+    r_pred = load_data(MAIN_PATH + "/Images/Test/right/*.jpg", NUM_TEST_IMAGES)
     pred = model.predict([l_pred, r_pred])
-    pred = pred[0, :, :, 0]
+    pred = pred[:, :, :, 0]
 
-    plt.imsave(exp + "/Predictions/pred0.png", pred, cmap='gray')
+    save_predictions(EXP + "/Predictions", NUM_TEST_IMAGES, pred)
 
 
 if __name__ == "__main__":

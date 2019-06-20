@@ -60,7 +60,7 @@ def unet(in_left=(64, 64, 1), in_right=(64, 64, 1)):
     return model
 
 
-def save_model(model: Model, path):
+def save_summary(model: Model, path):
     with open(path + '/' + 'summary.txt', 'w') as f:
         with redirect_stdout(f):
             model.summary()
