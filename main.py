@@ -1,3 +1,4 @@
+from Models.Model import *
 from Models.Unet import *
 from Models.vgg16 import *
 from Directory import *

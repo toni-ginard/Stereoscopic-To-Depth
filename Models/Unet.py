@@ -1,7 +1,6 @@
 from keras.models import *
 from keras.layers import *
 from keras import layers
-from contextlib import redirect_stdout
 
 
 def unet(in_left=(64, 64, 1), in_right=(64, 64, 1)):
@@ -59,8 +58,3 @@ def unet(in_left=(64, 64, 1), in_right=(64, 64, 1)):
 
     return model
 
-
-def save_summary(model: Model, path):
-    with open(path + '/' + 'summary.txt', 'w') as f:
-        with redirect_stdout(f):
-            model.summary()
