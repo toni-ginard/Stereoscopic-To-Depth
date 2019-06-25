@@ -27,13 +27,13 @@ import matplotlib.pyplot as plt
 #     return validation_generator
 
 
-def load_data(path, num_images):
+def load_data(path, num_images, in_size):
     images = io.imread_collection(path)
     list = []
     """for i in images:
         list.append(color.rgb2gray(i))"""
     for i in range(num_images):
-        list.append(resize(color.rgb2gray(images[i]), [64, 64]))
+        list.append(resize(color.rgb2gray(images[i]), [in_size, in_size]))
         list[i] = list[i][:, :, newaxis]
     my_array = array(list)
     my_array = my_array[:num_images]

@@ -1,5 +1,6 @@
 import os
 
 
-def create_exp_directory(path, exp_name):
-    os.mkdir()
+def create_exp_directory():
+    os.makedirs("Experiments/vgg16/Prova/Validation")
+    os.makedirs("Experiments/vgg16/Prova/Predictions")
