@@ -29,9 +29,9 @@ def main():
     # model.summary()
 
     # preparar directoris
-    create_exp_directory()
+    # create_exp_directory()
 
-    # save_summary(model, EXP)
+    save_summary(model, EXP_PATH)
 
     # LOAD TRAIN DATA
     l_train = load_data("/Images/Train/left/*.jpg", NUM_TRAIN_IMAGES)  # MAIN_PATH
