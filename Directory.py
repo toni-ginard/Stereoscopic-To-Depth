@@ -1,5 +1,6 @@
 import os
 
 
-def create_exp_directory():
-    os.makedirs("Experiments/vgg16/Prova/Predictions")
+def create_exp_directory(path):
+    if not os.path.exists(path):
+        os.makedirs(path)

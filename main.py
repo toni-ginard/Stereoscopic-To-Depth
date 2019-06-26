@@ -32,7 +32,7 @@ def main():
     # model.summary()
 
     # preparar directoris
-    create_exp_directory()
+    create_exp_directory("Experiments/vgg16/Prova")
 
     save_summary(model, EXP_PATH)
 
