@@ -3,6 +3,8 @@ from skimage import io
 from skimage import color
 from numpy import *
 import matplotlib.pyplot as plt
+from contextlib import redirect_stdout
+import os
 
 
 # def train_input_generator(gen, path1, path2):
@@ -16,10 +18,23 @@ import matplotlib.pyplot as plt
 #         yield [X1i[0], X2i[0]], X1i[1]
 
 
-# def input_generator(path):
-#     train_datagen = ImageDataGenerator(rescale=1./255)
-#     input_gen = train_datagen.flow_from_directory(path, target_size=(64, 64), batch_size=20, color_mode="grayscale")
-#     return input_gen
+def generator(path, in_size, batch_size):
+    datagen = ImageDataGenerator(rescale=1./255)
+    gen = datagen.flow_from_directory(path,
+                                      target_size=(in_size, in_size),
+                                      batch_size=batch_size,
+                                      class_mode='categorical',
+                                      color_mode='grayscale',
+                                      shuffle=False)
+    return gen
+
+
+def multiple_generator(x_gen, y_gen, z_gen):
+    while True:
+        x = x_gen.next()
+        y = y_gen.next()
+        z = z_gen.next()
+        yield [x[0], y[0]], z[0]
 
 
 # def train_output_generator(gen, path):
@@ -53,6 +68,13 @@ def save_validation(history, path):
     plt.yscale('log')
     plt.legend()
     plt.savefig(path)
+
+
+def save_summary(model, path):
+    open(os.path.join(path, 'summary.txt'), 'w')
+    with open(path + '/' + 'summary.txt', 'w') as f:
+        with redirect_stdout(f):
+            model.summary()
 
 
 def save_predictions(path, num_images, predictions):
