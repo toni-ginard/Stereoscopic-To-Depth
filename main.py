@@ -10,12 +10,12 @@ EXP_NAME = "n2/Prova/"
 EXP_PATH = MAIN_PATH + "Entrenaments/" + EXP_NAME
 
 
-EPOCHS = 10
+EPOCHS = 2
 BATCH_SIZE = 2
 
 NUM_TRAIN_IMAGES = 10
 NUM_VAL_IMAGES = 6
-NUM_TEST_IMAGES = 1
+NUM_TEST_IMAGES = 2
 
 IN_SIZE = 256
 
@@ -31,39 +31,35 @@ def main():
 
     save_summary(model, EXP_PATH)
 
-    # LOAD TRAIN IMAGES
-    l_train_gen = generator(MAIN_PATH + "Images/Train/left", IN_SIZE, BATCH_SIZE)
-    r_train_gen = generator(MAIN_PATH + "Images/Train/right", IN_SIZE, BATCH_SIZE)
-    d_train_gen = generator(MAIN_PATH + "Images/Train/depth", IN_SIZE, BATCH_SIZE)
+    train_generator = get_train_generator(MAIN_PATH + "Images/Train/left",
+                                          MAIN_PATH + "Images/Train/right",
+                                          MAIN_PATH + "Images/Train/depth",
+                                          IN_SIZE,
+                                          BATCH_SIZE)
 
-    # LOAD VALIDATION IMAGES
-    l_val_gen = generator(MAIN_PATH + "Images/Validation/left", IN_SIZE, BATCH_SIZE)
-    r_val_gen = generator(MAIN_PATH + "Images/Validation/right", IN_SIZE, BATCH_SIZE)
-    d_val_gen = generator(MAIN_PATH + "Images/Validation/depth", IN_SIZE, BATCH_SIZE)
-
-    train_generator = multiple_generator(l_train_gen, r_train_gen, d_train_gen)
-    val_generator = multiple_generator(l_val_gen, r_val_gen, d_val_gen)
+    val_generator = get_train_generator(MAIN_PATH + "Images/Validation/left",
+                                        MAIN_PATH + "Images/Validation/right",
+                                        MAIN_PATH + "Images/Validation/depth",
+                                        IN_SIZE,
+                                        BATCH_SIZE)
 
     history = model.fit_generator(train_generator,
+                                  steps_per_epoch=NUM_TRAIN_IMAGES / BATCH_SIZE,
                                   epochs=EPOCHS,
-                                  steps_per_epoch=NUM_TRAIN_IMAGES/BATCH_SIZE,
                                   validation_data=val_generator,
-                                  validation_steps=NUM_VAL_IMAGES/BATCH_SIZE,
-                                  shuffle=False)
+                                  validation_steps=NUM_VAL_IMAGES / BATCH_SIZE)
 
     save_validation(history.history, EXP_PATH + "/loss.png")
 
-    # LOAD PREDICTION DATA
-    l_pred = generator(MAIN_PATH + "Images/Test/left", IN_SIZE, BATCH_SIZE)
-    r_pred = generator(MAIN_PATH + "Images/Test/right", IN_SIZE, BATCH_SIZE)
+    test_generator = get_test_generator(MAIN_PATH + "Images/Test/left",
+                                        MAIN_PATH + "Images/Test/right",
+                                        IN_SIZE,
+                                        BATCH_SIZE)
 
-    # LOAD PREDICTION DATA
-#   l_pred = load_data(MAIN_PATH + "Images/Test/left/*.jpg", NUM_TEST_IMAGES, IN_SIZE)  # MAIN_PATH
-#   r_pred = load_data(MAIN_PATH + "Images/Test/right/*.jpg", NUM_TEST_IMAGES, IN_SIZE)  # MAIN_PATH
-#   pred = model.predict([l_pred, r_pred])
-#   pred = pred[:, :, :, 0]
+    predictions = model.predict_generator(test_generator,
+                                          steps=NUM_TEST_IMAGES)
 
-#   save_predictions(EXP_PATH + "Predictions", NUM_TEST_IMAGES, pred)
+    # save_predictions(EXP_PATH + "Predictions", NUM_TEST_IMAGES, predictions)
 
 
 if __name__ == "__main__":

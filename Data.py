@@ -7,39 +7,58 @@ from contextlib import redirect_stdout
 import os
 
 
-# def train_input_generator(gen, path1, path2):
-#     train_gen_left = gen.flow_from_directory(path1, target_size=(64, 64), batch_size=20)
-#
-#     train_gen_right = gen.flow_from_directory(path2, target_size=(64, 64), batch_size=20)
-#
-#     while True:
-#         X1i = train_gen_left.next()
-#         X2i = train_gen_right.next()
-#         yield [X1i[0], X2i[0]], X1i[1]
+def get_train_generator(l_path, r_path, d_path, in_size, batch_size):
+    l_datagen = ImageDataGenerator(rescale=1./255)
+    r_datagen = ImageDataGenerator(rescale=1./255)
+    d_datagen = ImageDataGenerator(rescale=1./255)
+
+    l_generator = l_datagen.flow_from_directory(l_path,
+                                                class_mode=None,
+                                                color_mode='grayscale',
+                                                target_size=(in_size, in_size),
+                                                batch_size=batch_size,
+                                                shuffle=False)
+
+    r_generator = r_datagen.flow_from_directory(r_path,
+                                                class_mode=None,
+                                                color_mode='grayscale',
+                                                target_size=(in_size, in_size),
+                                                batch_size=batch_size,
+                                                shuffle=False)
+
+    d_generator = d_datagen.flow_from_directory(d_path,
+                                                class_mode=None,
+                                                color_mode='grayscale',
+                                                target_size=(in_size, in_size),
+                                                batch_size=batch_size,
+                                                shuffle=False)
+
+    in_generator = zip(l_generator, r_generator)
+    train_generator = zip(in_generator, d_generator)
+    for (in_img, d_img) in train_generator:
+        yield([in_img[0], in_img[1]], d_img)
 
 
-def generator(path, in_size, batch_size):
-    datagen = ImageDataGenerator(rescale=1./255)
-    gen = datagen.flow_from_directory(path,
-                                      target_size=(in_size, in_size),
-                                      batch_size=batch_size,
-                                      class_mode='categorical',
-                                      color_mode='grayscale',
-                                      shuffle=False)
-    return gen
+def get_test_generator(l_path, r_path, in_size, batch_size):
+    l_datagen = ImageDataGenerator(rescale=1./255)
+    r_datagen = ImageDataGenerator(rescale=1./255)
 
+    l_generator = l_datagen.flow_from_directory(l_path,
+                                                class_mode=None,
+                                                color_mode='grayscale',
+                                                target_size=(in_size, in_size),
+                                                batch_size=batch_size,
+                                                shuffle=False)
 
-def multiple_generator(x_gen, y_gen, z_gen):
-    while True:
-        x = x_gen.next()
-        y = y_gen.next()
-        z = z_gen.next()
-        yield [x[0], y[0]], z[0]
-
-
-# def train_output_generator(gen, path):
-#     validation_generator = gen.flow_from_directory(path, target_size=(64, 64), batch_size=20)
-#     return validation_generator
+    r_generator = r_datagen.flow_from_directory(r_path,
+                                                class_mode=None,
+                                                color_mode='grayscale',
+                                                target_size=(in_size, in_size),
+                                                batch_size=batch_size,
+                                                shuffle=False)
+    test_generator = zip(l_generator, r_generator)
+    for (l_img, r_img) in test_generator:
+        yield(l_img, r_img)
 
 
 def load_data(path, num_images, in_size):
