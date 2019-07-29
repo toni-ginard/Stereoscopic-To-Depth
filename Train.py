@@ -40,19 +40,11 @@ def train(exp_name, epochs, batch_size, n_train_img, n_val_img, n_test_img):
 
     save_validation(history.history, exp_path + "/loss.png")
 
-    testgenerator = get_test_generator(main_path + "Images/Test/left",
-                                       main_path + "Images/Test/right",
-                                       IN_SIZE,
-                                       1)
+    test_generator = get_test_generator(main_path + "Images/Test/left",
+                                        main_path + "Images/Test/right",
+                                        IN_SIZE,
+                                        1)
 
-    l_test_generator = test_generator(main_path + "Images/Test/left",
-                                      IN_SIZE,
-                                      1)
-
-    r_test_generator = test_generator(main_path + "Images/Test/right",
-                                      IN_SIZE,
-                                      1)
-
-    predictions = model.predict_generator(testgenerator, steps=n_test_img)
+    predictions = model.predict_generator(test_generator, steps=n_test_img)
     predictions = predictions[:, :, :, 0]
     save_predictions(exp_path + "Predictions", n_test_img, predictions)

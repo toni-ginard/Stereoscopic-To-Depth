@@ -61,16 +61,6 @@ def get_test_generator(l_path, r_path, in_size, batch_size):
         yield [l_img, r_img]
 
 
-def test_generator(path, in_size, batch_size):
-    datagen = ImageDataGenerator(rescale=1./255)
-    generator = datagen.flow_from_directory(path,
-                                            class_mode=None,
-                                            color_mode='grayscale',
-                                            target_size=(in_size, in_size),
-                                            batch_size=batch_size,
-                                            shuffle=False)
-
-
 def load_data(path, num_images, in_size):
     images = io.imread_collection(path)
     list = []
