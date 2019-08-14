@@ -18,10 +18,12 @@ def get_model(input_channels=1, ouput_channels=1, in_left=(64, 64), in_right=(64
     lyrs = [
         layers.Conv2D(filters=32, kernel_size=(9, 9), strides=1, padding='same'),
         layers.Conv2D(filters=64, kernel_size=(3, 3), strides=2, padding='same'),
+        layers.Dropout(0.5),
         layers.Conv2D(filters=128, kernel_size=(3, 3), strides=2, padding='same'),
     ] + [ResidualBlock(num_filters=128) for i in range(residual_blocks)] + [
         layers.Conv2DTranspose(filters=64, kernel_size=(3, 3), strides=2, padding='same'),
         layers.Conv2DTranspose(filters=32, kernel_size=(3, 3), strides=2, padding='same'),
+        layers.Dropout(0.5),
         layers.Conv2D(filters=ouput_channels, kernel_size=(9, 9), strides=1, padding='same')
     ]
     # Define input-output logic. Assume channels last (tensorflow)

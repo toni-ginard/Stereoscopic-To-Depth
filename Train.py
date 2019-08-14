@@ -1,35 +1,33 @@
-from Models.Unet import *
 from Models.n2 import *
-from keras import optimizers
 from Data import *
 import os
 
 
-IN_SIZE = 256
-
-
-def train(exp_name, epochs, batch_size, n_train_img, n_val_img, n_test_img):
-    main_path = "/Users/toniginard/Desktop/TFG/"
+def train(exp_name, epochs, batch_size, in_size, n_train_img, n_val_img, n_test_img, pretrained_weights, opt):
+    main_path = "/Users/toniginard/TFG/"
     exp_path = main_path + "Entrenaments/" + "n2/" + exp_name + "/"
     
-    os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+    os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'  # os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
-    model = get_model(in_left=(IN_SIZE, IN_SIZE), in_right=(IN_SIZE, IN_SIZE))  # unet()
+    model = get_model(in_left=(in_size, in_size), in_right=(in_size, in_size))
 
-    model.compile(loss='mean_squared_error', optimizer=optimizers.RMSprop(lr=1e-4), metrics=['mse'])
+    model.compile(loss='mean_squared_error', optimizer=opt, metrics=['mse'])
+
+    if pretrained_weights:
+        model.load_weights(pretrained_weights)
 
     save_summary(model, exp_path)
 
     train_generator = get_train_generator(main_path + "Images/Train/left",
                                           main_path + "Images/Train/right",
                                           main_path + "Images/Train/depth",
-                                          IN_SIZE,
+                                          in_size,
                                           batch_size)
 
     val_generator = get_train_generator(main_path + "Images/Validation/left",
                                         main_path + "Images/Validation/right",
                                         main_path + "Images/Validation/depth",
-                                        IN_SIZE,
+                                        in_size,
                                         batch_size)
 
     history = model.fit_generator(train_generator,
@@ -42,7 +40,7 @@ def train(exp_name, epochs, batch_size, n_train_img, n_val_img, n_test_img):
 
     test_generator = get_test_generator(main_path + "Images/Test/left",
                                         main_path + "Images/Test/right",
-                                        IN_SIZE,
+                                        in_size,
                                         1)
 
     predictions = model.predict_generator(test_generator, steps=n_test_img)
