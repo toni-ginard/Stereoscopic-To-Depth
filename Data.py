@@ -1,17 +1,18 @@
 from keras.preprocessing.image import ImageDataGenerator
-from skimage import io
-from skimage import color
 from numpy import *
 import matplotlib.pyplot as plt
 from contextlib import redirect_stdout
 import os
 
 
-def get_train_generator(l_path, r_path, d_path, in_size, batch_size):
-    l_datagen = ImageDataGenerator(rescale=1./255)
-    r_datagen = ImageDataGenerator(rescale=1./255)
-    d_datagen = ImageDataGenerator(rescale=1./255)
+def adjust_data():
+    return ImageDataGenerator(rescale=1./255)
 
+
+def get_train_generator(l_path, r_path, d_path, in_size, batch_size):
+    l_datagen = adjust_data()
+    r_datagen = adjust_data()
+    d_datagen = adjust_data()
     l_generator = l_datagen.flow_from_directory(l_path,
                                                 class_mode=None,
                                                 color_mode='grayscale',
@@ -40,8 +41,8 @@ def get_train_generator(l_path, r_path, d_path, in_size, batch_size):
 
 
 def get_test_generator(l_path, r_path, in_size, batch_size):
-    l_datagen = ImageDataGenerator(rescale=1./255)
-    r_datagen = ImageDataGenerator(rescale=1./255)
+    l_datagen = adjust_data()
+    r_datagen = adjust_data()
 
     l_generator = l_datagen.flow_from_directory(l_path,
                                                 class_mode=None,
@@ -58,29 +59,21 @@ def get_test_generator(l_path, r_path, in_size, batch_size):
                                                 shuffle=False)
     test_generator = zip(l_generator, r_generator)
     for (l_img, r_img) in test_generator:
-        yield [l_img, r_img]
-
-
-def load_data(path, num_images, in_size):
-    images = io.imread_collection(path)
-    list = []
-    """for i in images:
-        list.append(color.rgb2gray(i))"""
-    for i in range(num_images):
-        list.append(resize(color.rgb2gray(images[i]), [in_size, in_size]))
-        list[i] = list[i][:, :, newaxis]
-    my_array = array(list)
-    my_array = my_array[:num_images]
-    return my_array  # array(list)  # [:num_images]
+        yield[l_img, r_img]
 
 
 def save_validation(history, path):
-    loss = history['loss']
-    val_loss = history['val_loss']
+    loss = []
+    val_loss = []
+
+    for i in history:
+        loss += i.history['loss']
+        val_loss += i.history['val_loss']
 
     epochs = range(1, len(loss) + 1)
     plt.plot(epochs, loss, 'bo', label='Training loss')
     plt.plot(epochs, val_loss, 'b', label='Validation loss')
+
     plt.title('Training and validation loss')
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
@@ -89,15 +82,15 @@ def save_validation(history, path):
     plt.savefig(path)
 
 
-def save_summary(model, path):
-    open(os.path.join(path, 'summary.txt'), 'w')
-    with open(path + '/' + 'summary.txt', 'w') as f:
+def save_summary(model, path, exp):
+    open(os.path.join(path, 'summary_' + exp + '.txt'), 'w')
+    with open(path + '/' + 'summary_' + exp + '.txt', 'w') as f:
         with redirect_stdout(f):
             model.summary()
 
 
 def save_predictions(path, num_images, predictions):
-    # plt.imsave(path + "pred0.png", predictions, cmap='gray')
-    for i in range(num_images):
-        name = path + "/pred" + str(i) + ".png"
-        plt.imsave(name, predictions[i], cmap='gray')
+    if num_images > 0:
+        for i in range(num_images):
+            name = path + "/pred" + str(i) + ".png"
+            plt.imsave(name, predictions[i], cmap='gray')
