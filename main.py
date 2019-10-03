@@ -7,20 +7,21 @@ def main():
     exp = "MT4"
     ep = 2
     bs = 2
-    train_img = 8
-    val_img = 4
+    train_img = 4
+    val_img = 2
     rmsprop = optimizers.RMSprop(lr=1e-4)
 
     # img_size, n_test_img, conj, pretrained_weights
     exps_params = [(64,  1,  '1', None),
-                  (128, 1,  '1', "weights_" + exp + ".h5"),
-                  (256, 1,  '1', "weights_" + exp + ".h5"),
-                  (64,  1,  '2', "weights_" + exp + ".h5"),
-                  (128, 1,  '2', "weights_" + exp + ".h5"),
-                  (256, 1,  '2', "weights_" + exp + ".h5"),
-                  (64,  1,  '3', "weights_" + exp + ".h5"),
-                  (128, 1,  '3', "weights_" + exp + ".h5"),
-                  (256, 10, '3', "weights_" + exp + ".h5")]
+                   (128, 1,  '1', "weights_" + exp + ".h5")]
+    """,
+                   (256, 1,  '1', "weights_" + exp + ".h5"),
+                   (64,  1,  '2', "weights_" + exp + ".h5"),
+                   (128, 1,  '2', "weights_" + exp + ".h5"),
+                   (256, 1,  '2', "weights_" + exp + ".h5"),
+                   (64,  1,  '3', "weights_" + exp + ".h5"),
+                   (128, 1,  '3', "weights_" + exp + ".h5"),
+                   (256, 10, '3', "weights_" + exp + ".h5")] """
 
     histories = []
 

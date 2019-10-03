@@ -6,6 +6,10 @@ import os
 
 
 def adjust_data():
+    """ Adjust data for data segmentation.
+
+    :return: ImageDataGenerator object.
+    """
     return ImageDataGenerator(rescale=1./255)
 
 
@@ -63,6 +67,12 @@ def get_test_generator(l_path, r_path, in_size, batch_size):
 
 
 def save_validation(history, path):
+    """ Save a graphic for our training's loss and validation loss. Y axis is in logarithmic scale.
+
+    :param history: History object. Its `History.history` attribute is a record of training loss
+        and validation loss values at successive epochs.
+    :param path: directory where to store the graphic.
+    """
     loss = []
     val_loss = []
 
@@ -82,14 +92,25 @@ def save_validation(history, path):
     plt.savefig(path)
 
 
-def save_summary(model, path, exp):
-    open(os.path.join(path, 'summary_' + exp + '.txt'), 'w')
-    with open(path + '/' + 'summary_' + exp + '.txt', 'w') as f:
+def save_summary(model, path):
+    """ Save summary of a model in the specified path.
+
+    :param model: net model.
+    :param path: directory where to store the summary.
+    """
+    open(os.path.join(path, 'summary.txt'), 'w')
+    with open(path + '/' + 'summary.txt', 'w') as f:
         with redirect_stdout(f):
             model.summary()
 
 
 def save_predictions(path, num_images, predictions):
+    """ Save predictions made from a model.
+
+    :param path: directory where to store the predictions.
+    :param int num_images: number of predictions made.
+    :param predictions: numpy.array
+    """
     if num_images > 0:
         for i in range(num_images):
             name = path + "/pred" + str(i) + ".png"

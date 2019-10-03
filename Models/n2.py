@@ -2,7 +2,7 @@ from keras.models import *
 from keras import layers
 
 
-def get_model(input_channels=1, ouput_channels=1, in_left=(64,64), in_right=(64,64), residual_blocks=5):
+def get_model(input_channels=1, ouput_channels=1, in_left=(64, 64), in_right=(64, 64), residual_blocks=5):
     """ Generate an image-to-image model.
 
     Based on "Perceptual Losses for Real-Time Style Transfer and Super-Resolution", by Justin et al.
