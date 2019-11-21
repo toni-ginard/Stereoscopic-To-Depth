@@ -1,9 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
 from keras.models import *
 from keras.layers import *
 from keras import layers
 
 
-def unet(in_left=(64, 64, 1), in_right=(64, 64, 1)):
+def u_net(in_left=(64, 64, 1), in_right=(64, 64, 1)):
     """ U-net architecture based on zhixuhao model.
 
     :param in_left: image corresponding to the left eye.
