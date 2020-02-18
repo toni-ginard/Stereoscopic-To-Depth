@@ -8,6 +8,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from numpy import *
 import matplotlib.pyplot as plt
 import os
+from collections import Iterable
 
 
 def adjust_data():
@@ -29,26 +30,32 @@ def get_train_generator(l_path, r_path, d_path):
     l_datagen = adjust_data()
     r_datagen = adjust_data()
     d_datagen = adjust_data()
-    l_generator = l_datagen.flow_from_directory(l_path,
-                                                class_mode=None,
-                                                color_mode='grayscale',
-                                                target_size=(IMG_SIZE, IMG_SIZE),
-                                                batch_size=BATCH_SIZE,
-                                                shuffle=False)
+    l_generator = l_datagen.flow_from_directory(
+        l_path,
+        class_mode=None,
+        color_mode='grayscale',
+        target_size=(IMG_SIZE, IMG_SIZE),
+        batch_size=BATCH_SIZE,
+        shuffle=False
+    )
 
-    r_generator = r_datagen.flow_from_directory(r_path,
-                                                class_mode=None,
-                                                color_mode='grayscale',
-                                                target_size=(IMG_SIZE, IMG_SIZE),
-                                                batch_size=BATCH_SIZE,
-                                                shuffle=False)
+    r_generator = r_datagen.flow_from_directory(
+        r_path,
+        class_mode=None,
+        color_mode='grayscale',
+        target_size=(IMG_SIZE, IMG_SIZE),
+        batch_size=BATCH_SIZE,
+        shuffle=False
+    )
 
-    d_generator = d_datagen.flow_from_directory(d_path,
-                                                class_mode=None,
-                                                color_mode='grayscale',
-                                                target_size=(IMG_SIZE, IMG_SIZE),
-                                                batch_size=BATCH_SIZE,
-                                                shuffle=False)
+    d_generator = d_datagen.flow_from_directory(
+        d_path,
+        class_mode=None,
+        color_mode='grayscale',
+        target_size=(IMG_SIZE, IMG_SIZE),
+        batch_size=BATCH_SIZE,
+        shuffle=False
+    )
 
     in_generator = zip(l_generator, r_generator)
     train_generator = zip(in_generator, d_generator)
@@ -67,26 +74,31 @@ def get_test_generator(l_path, r_path):
     l_datagen = adjust_data()
     r_datagen = adjust_data()
 
-    l_generator = l_datagen.flow_from_directory(l_path,
-                                                class_mode=None,
-                                                color_mode='grayscale',
-                                                target_size=(IMG_SIZE, IMG_SIZE),
-                                                batch_size=1,
-                                                shuffle=False)
+    l_generator = l_datagen.flow_from_directory(
+        l_path,
+        class_mode=None,
+        color_mode='grayscale',
+        target_size=(IMG_SIZE, IMG_SIZE),
+        batch_size=1,
+        shuffle=False
+    )
 
-    r_generator = r_datagen.flow_from_directory(r_path,
-                                                class_mode=None,
-                                                color_mode='grayscale',
-                                                target_size=(IMG_SIZE, IMG_SIZE),
-                                                batch_size=1,
-                                                shuffle=False)
+    r_generator = r_datagen.flow_from_directory(
+        r_path,
+        class_mode=None,
+        color_mode='grayscale',
+        target_size=(IMG_SIZE, IMG_SIZE),
+        batch_size=1,
+        shuffle=False
+    )
+
     test_generator = zip(l_generator, r_generator)
     for (l_img, r_img) in test_generator:
         yield[l_img, r_img]
 
 
 def save_validation(history, directory):
-    """ Saves a graphic for our training's loss and validation loss. Y axis is in logarithmic scale.
+    """ Saves a graphic for our training and validation loss. Y axis is in logarithmic scale.
 
     :param history: History object. Its `History.history` attribute is a record of training loss
         and validation loss values at successive epochs.
@@ -95,9 +107,10 @@ def save_validation(history, directory):
     loss = []
     val_loss = []
 
-    for i in history:
-        loss += i.history['loss']
-        val_loss += i.history['val_loss']
+    if isinstance(history, Iterable):
+        for i in history:
+            loss += i.history['loss']
+            val_loss += i.history['val_loss']
 
     epochs = range(1, len(loss) + 1)
     plt.plot(epochs, loss, 'bo', label='Training loss')
@@ -117,7 +130,7 @@ def save_summary(model, directory):
     :param model: net model.
     :param directory: directory where to store the summary.
     """
-    open(os.path.join(path, 'summary.txt'), 'w')
+    open(os.path.join(directory, 'summary.txt'), 'w')
     with open(directory + '/' + 'summary.txt', 'w') as f:
         with redirect_stdout(f):
             model.summary()

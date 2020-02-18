@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 
-EXP = "MT4"
-
+EXP_NAME = "SampleTraining"
+DATA_PATH = "Images"
 EPOCHS = 2
-BATCH_SIZE = 2
+BATCH_SIZE = 1
 
-N_TRAIN_IMG = 4
-N_VAL_IMG = 2
+N_TRAIN_IMG = 2
+N_VAL_IMG = 1
 N_TEST_IMG = 1
 
-IMG_SIZE = 64
+IMG_SIZE = 128
